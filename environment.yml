@@ -14,7 +14,7 @@ dependencies:
   - bedtools
   - vsearch
   - varscan
-  - tensorflow==2.7.0
+  - tensorflow==2.8.0
   - cuda-version
   - pip
   - pip:
