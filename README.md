@@ -50,7 +50,7 @@ conda deactivate
 To test if the installation was successful run:
 ```bash
 conda activate MrHAMER2
-snakemake --cores 4 --configfile config.yml
+snakemake -j 4 --configfile config.yml
 ```
  
 ******************
@@ -102,9 +102,9 @@ You can also adjust the optional parameters listed below:
 ### Running the pipeline
 Once the config.yml is updated with the correct information and the MrHAMER2 environment is activated, simply run the following command:
 ```bash
-snakemake --cores 4 --configfile config.yml
+snakemake -j 32 --configfile config.yml
 ```
-`--cores` specifies how many CPU cores will be used by the pipeline.
+`-j` specifies how many threads will be used by the pipeline.
 
 ### Outputs
  The main output file created by the pipeline is:
