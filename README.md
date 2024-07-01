@@ -38,6 +38,10 @@ Copy modified Medaka files provided by MrHAMER2 to conda environment:
 ```bash
 cp medaka_mod/* $CONDA_PREFIX/lib/python3.8/site-packages/medaka
 ```
+Install Auxiliary Python Scripts
+```bash
+cd lib && pip install . && cd ..
+```
 Deactivate environment:
 ```bash
 conda deactivate
