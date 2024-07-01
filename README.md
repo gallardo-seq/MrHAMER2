@@ -3,11 +3,11 @@
 MrHAMER 2.0 is a pipeline for generating of high accuracy single molecule Nanopore reads. The pipeline accepts FASTQ-format sequence files as input and outputs a multi-fastq of corrected non-chimeric reads, aligned reads and QC stats. 
 ### Features
 The pipeline performs the following steps:
-- Reads are mapped to reference genome using [minimap2] [minimap2]
+- Reads are mapped to reference genome using [minimap2]
 - Separate into amplicons
 - Extract UMI sequences for all reads
-- Cluster UMI sequences per amplicon using [vsearch] [vsearch] and compute high accuracy consensus reads
-- Remove pcr-derived chimeras using [Chimera_Buster] [Chimera_Buster] (optional)
+- Cluster UMI sequences per amplicon using [vsearch] and compute high accuracy consensus reads
+- Remove pcr-derived chimeras using [Chimera_Buster] (optional)
 
 ******************
 # Getting Started
@@ -65,7 +65,7 @@ To run the pipeline the following input files are required:
 | Long-read sequences | Folder containing FASTQ files or a single concatenated FASTQ file. |
 | Reference genome | FASTA file containing the reference genome. |
 | Target BED file | A BED file containing the chromosome, start and end coordinate and the name of all amplicons.|
-| Medaka Model file | A tar.gz file that provides the model for Medaka processing. NOTE: The medaka model file for R10.4 chemistry with e8.2 pores at 400 bps speed is provided. For more information on Medaka models, see [here] [medaka_model_info]. If a different model is needed, please download from [here] [medaka_model_download].
+| Medaka Model file | A tar.gz file that provides the model for Medaka processing. NOTE: The medaka model file for R10.4 chemistry with e8.2 pores at 400 bps speed is provided. For more information on Medaka models, see [medaka model info]. If a different model is needed, please download from [medaka model download].
 
 ### Config File
 Before starting the pipeline, confirm the following varibles are correct in the config.yml file:
@@ -126,7 +126,7 @@ MIT - Copyright (c) 2024 Christian M Gallardo and Jessica L Albert
    [Chimera_Buster]: <https://github.com/JessicaA2019/Chimera_Buster>
    [issues]: <https://github.com/gallardo-seq/MrHAMER2/issues>
    [vsearch]: <https://github.com/torognes/vsearch>
-   [medaka_model_info]: <https://github.com/nanoporetech/medaka#models>
-   [medaka_model_download]: <https://github.com/nanoporetech/medaka/tree/master/medaka/data>
+   [medaka model info]: <https://github.com/nanoporetech/medaka#models>
+   [medaka model download]: <https://github.com/nanoporetech/medaka/tree/master/medaka/data>
 
 
