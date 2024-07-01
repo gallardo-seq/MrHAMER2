@@ -1,0 +1,56 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 32
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	chimera_buster
+	1	cluster
+	1	cluster_consensus
+	1	copy_bed
+	1	detect_umi_consensus_fasta
+	1	detect_umi_fasta
+	1	map_1d
+	2	map_consensus
+	1	mv_CB_file
+	1	polish_clusters
+	1	pull_nonchimeras
+	1	reads
+	1	reformat_consensus_clusters
+	1	reformat_filter_clusters
+	1	seqkit_bam_acc_tsv
+	1	split_reads
+	17
+
+[Mon Jul  1 12:56:59 2024]
+rule map_1d:
+    input: test_files/MrHAMER2_test.fastq, test_files/NL43_Complete.fa
+    output: MrHAMER2_test/align/1d.bam, MrHAMER2_test/align/1d.bam.bai
+    jobid: 16
+    wildcards: name=MrHAMER2_test
+    threads: 30
+
+
+[Mon Jul  1 12:56:59 2024]
+rule copy_bed:
+    input: test_files/regions.bed
+    output: MrHAMER2_test/targets.bed
+    jobid: 1
+    wildcards: name=MrHAMER2_test
+
+[Mon Jul  1 12:56:59 2024]
+Finished job 1.
+1 of 17 steps (6%) done
+[Mon Jul  1 12:56:59 2024]
+Error in rule map_1d:
+    jobid: 16
+    output: MrHAMER2_test/align/1d.bam, MrHAMER2_test/align/1d.bam.bai
+    shell:
+        catfishq --max_n 0 test_files/MrHAMER2_test.fastq | minimap2 -ax map-ont -k 13 -t 30 test_files/NL43_Complete.fa - | samtools sort -@ 5 -o MrHAMER2_test/align/1d.bam - && samtools index -@ 30 MrHAMER2_test/align/1d.bam
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job map_1d since they might be corrupted:
+MrHAMER2_test/align/1d.bam
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/torbett-seq2/Desktop/scripts_refs/MrHAMER2/.snakemake/log/2024-07-01T125659.724141.snakemake.log

@@ -1,0 +1,23 @@
+name: MrHAMER2
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8.16 
+  - snakemake
+  - minimap2
+  - samtools
+  - tabix
+  - seqkit
+  - pysam
+  - bedtools
+  - vsearch
+  - varscan
+  - tensorflow==2.7.0
+  - cuda-version
+  - pip
+  - pip:
+    - catfishq
+    - medaka==1.7.3
+    - Chimera_Buster

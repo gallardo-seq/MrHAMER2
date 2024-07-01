@@ -1,0 +1,265 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 32
+Rules claiming more threads will be scaled down.
+Job stats:
+job                            count
+---------------------------  -------
+chimera_buster                     1
+cluster                            1
+cluster_consensus                  1
+copy_bed                           1
+detect_umi_consensus_fasta         1
+detect_umi_fasta                   1
+map_1d                             1
+map_consensus                      2
+mv_CB_file                         1
+polish_clusters                    1
+pull_nonchimeras                   1
+reads                              1
+reformat_consensus_clusters        1
+reformat_filter_clusters           1
+seqkit_bam_acc_tsv                 1
+split_reads                        1
+total                             17
+
+Select jobs to execute...
+
+[Mon Jul  1 12:57:11 2024]
+rule copy_bed:
+    input: test_files/regions.bed
+    output: MrHAMER2_test/targets.bed
+    jobid: 1
+    reason: Code has changed since last execution
+    wildcards: name=MrHAMER2_test
+    resources: tmpdir=/tmp
+
+
+[Mon Jul  1 12:57:11 2024]
+rule map_1d:
+    input: test_files/MrHAMER2_test.fastq, test_files/NL43_Complete.fa
+    output: MrHAMER2_test/align/1d.bam, MrHAMER2_test/align/1d.bam.bai
+    jobid: 11
+    reason: Missing output files: MrHAMER2_test/align/1d.bam
+    wildcards: name=MrHAMER2_test
+    threads: 30
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:57:11 2024]
+Finished job 1.
+1 of 17 steps (6%) done
+[Mon Jul  1 12:57:12 2024]
+Finished job 11.
+2 of 17 steps (12%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:57:12 2024]
+rule split_reads:
+    input: MrHAMER2_test/align/1d.bam
+    output: MrHAMER2_test/fasta_filtered, MrHAMER2_test/stats/umi_filter_reads_stats.txt
+    jobid: 10
+    reason: Missing output files: MrHAMER2_test/fasta_filtered; Input files updated by another job: MrHAMER2_test/align/1d.bam
+    wildcards: name=MrHAMER2_test
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:57:13 2024]
+Finished job 10.
+3 of 17 steps (18%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:57:13 2024]
+rule detect_umi_fasta:
+    input: MrHAMER2_test/fasta_filtered
+    output: MrHAMER2_test/fasta_umi/Env_detected_umis.fasta
+    jobid: 9
+    reason: Missing output files: MrHAMER2_test/fasta_umi/Env_detected_umis.fasta; Input files updated by another job: MrHAMER2_test/fasta_filtered
+    wildcards: name=MrHAMER2_test, target=Env
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:57:14 2024]
+Finished job 9.
+4 of 17 steps (24%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:57:14 2024]
+rule cluster:
+    input: MrHAMER2_test/fasta_umi/Env_detected_umis.fasta
+    output: MrHAMER2_test/clustering/Env/clusters_centroid.fasta, MrHAMER2_test/clustering/Env/clusters_consensus.fasta, MrHAMER2_test/clustering/Env/vsearch_clusters
+    jobid: 8
+    reason: Missing output files: MrHAMER2_test/clustering/Env/clusters_consensus.fasta, MrHAMER2_test/clustering/Env/vsearch_clusters; Input files updated by another job: MrHAMER2_test/fasta_umi/Env_detected_umis.fasta
+    wildcards: name=MrHAMER2_test, target=Env
+    threads: 10
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:57:14 2024]
+Finished job 8.
+5 of 17 steps (29%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:57:14 2024]
+rule reformat_filter_clusters:
+    input: MrHAMER2_test/clustering/Env/clusters_consensus.fasta, MrHAMER2_test/clustering/Env/vsearch_clusters
+    output: MrHAMER2_test/clustering/Env/clusters_fa, MrHAMER2_test/stats/Env_vsearch_cluster_stats.tsv, MrHAMER2_test/clustering/Env/smolecule_clusters.fa
+    jobid: 7
+    reason: Missing output files: MrHAMER2_test/clustering/Env/clusters_fa, MrHAMER2_test/stats/Env_vsearch_cluster_stats.tsv, MrHAMER2_test/clustering/Env/smolecule_clusters.fa; Input files updated by another job: MrHAMER2_test/clustering/Env/clusters_consensus.fasta, MrHAMER2_test/clustering/Env/vsearch_clusters
+    wildcards: name=MrHAMER2_test, target=Env
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:57:14 2024]
+Finished job 7.
+6 of 17 steps (35%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:57:14 2024]
+rule polish_clusters:
+    input: MrHAMER2_test/clustering/Env/clusters_fa, MrHAMER2_test/clustering/Env/smolecule_clusters.fa
+    output: MrHAMER2_test/fasta/Env_consensus_tmp, MrHAMER2_test/fasta/Env_consensus.bam, MrHAMER2_test/fasta/Env_consensus.fasta
+    jobid: 6
+    reason: Missing output files: MrHAMER2_test/fasta/Env_consensus.fasta; Input files updated by another job: MrHAMER2_test/clustering/Env/clusters_fa, MrHAMER2_test/clustering/Env/smolecule_clusters.fa
+    wildcards: name=MrHAMER2_test, target=Env
+    threads: 30
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:58:27 2024]
+Finished job 6.
+7 of 17 steps (41%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:58:27 2024]
+rule detect_umi_consensus_fasta:
+    input: MrHAMER2_test/fasta/Env_consensus.fasta
+    output: MrHAMER2_test/fasta_umi/Env_detected_umis_final.fasta
+    jobid: 5
+    reason: Missing output files: MrHAMER2_test/fasta_umi/Env_detected_umis_final.fasta; Input files updated by another job: MrHAMER2_test/fasta/Env_consensus.fasta
+    wildcards: name=MrHAMER2_test, target=Env
+    resources: tmpdir=/tmp
+
+
+[Mon Jul  1 12:58:27 2024]
+rule map_consensus:
+    input: MrHAMER2_test/fasta/Env_consensus.fasta, test_files/NL43_Complete.fa
+    output: MrHAMER2_test/align/Env_consensus.bam, MrHAMER2_test/align/Env_consensus.bam.bai
+    jobid: 13
+    reason: Missing output files: MrHAMER2_test/align/Env_consensus.bam; Input files updated by another job: MrHAMER2_test/fasta/Env_consensus.fasta
+    wildcards: name=MrHAMER2_test, target=Env, type=consensus
+    threads: 3
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:58:27 2024]
+Finished job 5.
+8 of 17 steps (47%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:58:27 2024]
+rule cluster_consensus:
+    input: MrHAMER2_test/fasta_umi/Env_detected_umis_final.fasta
+    output: MrHAMER2_test/clustering_consensus/Env/clusters_centroid.fasta, MrHAMER2_test/clustering_consensus/Env/clusters_consensus.fasta, MrHAMER2_test/clustering_consensus/Env/vsearch_clusters
+    jobid: 4
+    reason: Missing output files: MrHAMER2_test/clustering_consensus/Env/clusters_consensus.fasta; Input files updated by another job: MrHAMER2_test/fasta_umi/Env_detected_umis_final.fasta
+    wildcards: name=MrHAMER2_test, target=Env
+    threads: 10
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:58:27 2024]
+Finished job 4.
+9 of 17 steps (53%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:58:27 2024]
+rule chimera_buster:
+    input: MrHAMER2_test/clustering/Env/clusters_consensus.fasta, MrHAMER2_test/clustering_consensus/Env/clusters_consensus.fasta
+    output: CB_Env_non_chimeras.csv, CB_Env_chimeras.csv, CB_Env_nonchimera_list.txt, CB_Env_chimera_list.txt
+    jobid: 16
+    reason: Missing output files: CB_Env_chimera_list.txt, CB_Env_nonchimera_list.txt, CB_Env_chimeras.csv, CB_Env_non_chimeras.csv; Input files updated by another job: MrHAMER2_test/clustering_consensus/Env/clusters_consensus.fasta, MrHAMER2_test/clustering/Env/clusters_consensus.fasta
+    wildcards: target=Env
+    resources: tmpdir=/tmp
+
+
+[Mon Jul  1 12:58:27 2024]
+rule reformat_consensus_clusters:
+    input: MrHAMER2_test/clustering_consensus/Env/clusters_consensus.fasta
+    output: MrHAMER2_test/fasta/Env_final.fasta
+    jobid: 3
+    reason: Missing output files: MrHAMER2_test/fasta/Env_final.fasta; Input files updated by another job: MrHAMER2_test/clustering_consensus/Env/clusters_consensus.fasta
+    wildcards: name=MrHAMER2_test, target=Env
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:58:27 2024]
+Finished job 3.
+10 of 17 steps (59%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:58:27 2024]
+rule map_consensus:
+    input: MrHAMER2_test/fasta/Env_final.fasta, test_files/NL43_Complete.fa
+    output: MrHAMER2_test/align/Env_final.bam, MrHAMER2_test/align/Env_final.bam.bai
+    jobid: 2
+    reason: Missing output files: MrHAMER2_test/align/Env_final.bam.bai; Input files updated by another job: MrHAMER2_test/fasta/Env_final.fasta
+    wildcards: name=MrHAMER2_test, target=Env, type=final
+    threads: 3
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:58:27 2024]
+Finished job 13.
+11 of 17 steps (65%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:58:27 2024]
+rule seqkit_bam_acc_tsv:
+    input: MrHAMER2_test/align/Env_consensus.bam
+    output: MrHAMER2_test/stats/Env_consensus_size_vs_acc.tsv
+    jobid: 12
+    reason: Missing output files: MrHAMER2_test/stats/Env_consensus_size_vs_acc.tsv; Input files updated by another job: MrHAMER2_test/align/Env_consensus.bam
+    wildcards: name=MrHAMER2_test, target=Env, stage=consensus
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:58:27 2024]
+Finished job 12.
+12 of 17 steps (71%) done
+[Mon Jul  1 12:58:27 2024]
+Finished job 2.
+13 of 17 steps (76%) done
+[Mon Jul  1 12:58:28 2024]
+Finished job 16.
+14 of 17 steps (82%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:58:28 2024]
+rule mv_CB_file:
+    input: CB_Env_non_chimeras.csv, CB_Env_chimeras.csv, CB_Env_nonchimera_list.txt, CB_Env_chimera_list.txt
+    output: MrHAMER2_test/Chimera_Buster/CB_Env_non_chimeras.csv, MrHAMER2_test/Chimera_Buster/CB_Env_chimeras.csv, MrHAMER2_test/Chimera_Buster/CB_Env_nonchimera_list.txt, MrHAMER2_test/Chimera_Buster/CB_Env_chimera_list.txt
+    jobid: 15
+    reason: Missing output files: MrHAMER2_test/Chimera_Buster/CB_Env_nonchimera_list.txt; Input files updated by another job: CB_Env_nonchimera_list.txt, CB_Env_chimeras.csv, CB_Env_chimera_list.txt, CB_Env_non_chimeras.csv
+    wildcards: name=MrHAMER2_test, target=Env
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:58:28 2024]
+Finished job 15.
+15 of 17 steps (88%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:58:28 2024]
+rule pull_nonchimeras:
+    input: MrHAMER2_test/Chimera_Buster/CB_Env_nonchimera_list.txt, MrHAMER2_test/fasta/Env_consensus.fasta
+    output: MrHAMER2_test/MrHAMER2_test_Env_final.fastq
+    jobid: 14
+    reason: Missing output files: MrHAMER2_test/MrHAMER2_test_Env_final.fastq; Input files updated by another job: MrHAMER2_test/fasta/Env_consensus.fasta, MrHAMER2_test/Chimera_Buster/CB_Env_nonchimera_list.txt
+    wildcards: name=MrHAMER2_test, target=Env
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:58:28 2024]
+Finished job 14.
+16 of 17 steps (94%) done
+Select jobs to execute...
+
+[Mon Jul  1 12:58:28 2024]
+localrule reads:
+    input: MrHAMER2_test/targets.bed, MrHAMER2_test/align/Env_final.bam.bai, MrHAMER2_test/stats/Env_vsearch_cluster_stats.tsv, MrHAMER2_test/stats/Env_consensus_size_vs_acc.tsv, MrHAMER2_test/MrHAMER2_test_Env_final.fastq
+    jobid: 0
+    reason: Input files updated by another job: MrHAMER2_test/MrHAMER2_test_Env_final.fastq, MrHAMER2_test/targets.bed, MrHAMER2_test/stats/Env_vsearch_cluster_stats.tsv, MrHAMER2_test/align/Env_final.bam.bai, MrHAMER2_test/stats/Env_consensus_size_vs_acc.tsv
+    resources: tmpdir=/tmp
+
+[Mon Jul  1 12:58:28 2024]
+Finished job 0.
+17 of 17 steps (100%) done
+Complete log: .snakemake/log/2024-07-01T125711.011913.snakemake.log
