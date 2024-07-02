@@ -1,8 +1,8 @@
-<p align="center"><img src="/MrHAMER2_logo.png" alt="MrHAMER2-logo" width="500"></p>
+<p align="center"><img src="/MrHAMER2-logo.png" alt="MrHAMER2-logo" width="500"></p>
 
 # MrHAMER2
 ### Overview
-MrHAMER 2.0 is a pipeline for generating of high accuracy single molecule Nanopore reads. The pipeline accepts FASTQ-format sequence files as input and outputs a multi-fastq of corrected non-chimeric reads, aligned reads and QC stats. 
+MrHAMER2 is a pipeline for generating of high accuracy single molecule Nanopore reads. The pipeline accepts FASTQ-format sequence files as input and outputs a multi-fastq of corrected non-chimeric reads, aligned reads and QC stats. 
 ### Features
 The pipeline performs the following steps:
 - Reads are mapped to reference genome using [minimap2]
