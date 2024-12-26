@@ -2,14 +2,19 @@
 
 # MrHAMER2
 ### Overview
-MrHAMER2 is a pipeline for generating of high accuracy single molecule Nanopore reads. The pipeline accepts FASTQ-format sequence files as input and outputs a multi-fastq of corrected non-chimeric reads, aligned reads and QC stats. 
+MrHAMER2 is a pipeline for generating of high accuracy single molecule Nanopore reads. The pipeline accepts FASTQ-format sequence files as input and outputs a multi-FASTQ of corrected non-chimeric reads, aligned reads and QC stats.
+
+This is a heavily customized and enhanced version of https://github.com/nanoporetech/pipeline-umi-amplicon from Oxford Nanopore Technologies.
+
+The pre-print is available at https://www.biorxiv.org/content/10.1101/2024.12.19.629526
+
 ### Features
 The pipeline performs the following steps:
 - Reads are mapped to reference genome using [minimap2]
 - Separate into amplicons
 - Extract UMI sequences for all reads
 - Cluster UMI sequences per amplicon using [vsearch] and compute high accuracy consensus reads
-- Remove pcr-derived chimeras using [Chimera_Buster] (optional)
+- Remove PCR-derived chimeras using [Chimera_Buster] (optional)
 
 ******************
 # Getting Started
