@@ -14,10 +14,17 @@ def read_bed_names(filename):
 
 def CB_status(chimera_buster_status):
 	if chimera_buster_status:
-		chimera_buster = expand("{name}/{name}_{target}_final.fastq", name=sample_name, target=target)
+		chimera_buster = expand("{name}/outputs/{name}_{target}_final.fastq", name=sample_name, target=target)
 	else:
-		chimera_buster = expand("{name}/clustering/{target}/clusters_consensus.fasta", name=sample_name, target=target)
+		chimera_buster = expand("{name}/outputs/{name}_{target}_consensus.fastq", name=sample_name, target=target)
 	return chimera_buster
+
+def duplex_status(balance_strands, min_reads_per_cluster,chimera_buster_status):
+        if balance_strands == True and min_reads_per_cluster == 2 and chimera_buster_status == True:
+                duplex = expand("{name}/outputs/{name}_{target}_b2_pairs_ids.txt", name=sample_name, target=target)
+        else:
+                duplex = expand("{name}/clustering/{target}/clusters_consensus.fasta", name=sample_name, target=target)
+        return duplex
 
 ########################
 ### FIXED PARAMETERS ###
@@ -64,6 +71,8 @@ target = read_bed_names(target_bed)
 
 CB_file = CB_status(chimera_buster_status)
 
+duplex_file = duplex_status(balance_strands, min_reads_per_cluster, chimera_buster_status)
+
 balance_strands_param = "--balance_strands"
 if not balance_strands:
     balance_strands_param = ""
@@ -80,7 +89,8 @@ rule reads:
         expand("{name}/align/{target}_final.bam.bai", name=sample_name, target=target),
         expand("{name}/stats/{target}_vsearch_cluster_stats.tsv", name=sample_name, target=target),
         expand("{name}/stats/{target}_consensus_size_vs_acc.tsv", name=sample_name, target=target),
-	CB_file
+	CB_file,
+	duplex_file
 
 rule clusters:
     input:
@@ -99,7 +109,8 @@ rule all:
         expand("{name}/stats/{target}_vsearch_cluster_stats.tsv", name=sample_name, target=target), 
         expand("{name}/variants/{target}_final.vcf.gz", name=sample_name, target=target),
         expand("{name}/stats/{target}_consensus_size_vs_acc.tsv", name=sample_name, target=target),
-	CB_file
+	CB_file,
+	duplex_file
 
 rule copy_bed:
     input:
@@ -334,7 +345,7 @@ rule pull_nonchimeras:
         list = "{name}/Chimera_Buster/CB_{target}_nonchimera_list.txt",
     	fastq = "{name}/fasta/{target}_consensus.fasta"
     output:
-        final = "{name}/{name}_{target}_final.fastq"
+        final = "{name}/outputs/{name}_{target}_final.fastq"
     params:
         CB_param= CB_param
     shell:
@@ -342,3 +353,55 @@ rule pull_nonchimeras:
         seqtk subseq {input.fastq} {input.list} > {output.final}
         """
 
+rule pull_clusters_noCB:
+    input:
+        fastq = "{name}/fasta/{target}_consensus.fasta"
+    output:
+        final = "{name}/outputs/{name}_{target}_consensus.fastq"
+    shell:
+        """
+        cp {input.fastq} {output.final}
+        """
+
+rule duplex_pull_CB_clusters:
+    input:
+        fastq = "{name}/outputs/{name}_{target}_final.fastq"
+    output:
+        list = "{name}/duplex/{name}_{target}_all_clusters.txt"
+    shell:
+        """
+        seqkit seq -i -n {input.fastq} | sed 's/_0//g ; s/^/cluster/g' -  > {output.list}
+	"""
+
+rule duplex_pull_b2_clusters:
+    input:
+        tsv = "{name}/stats/{target}_vsearch_cluster_stats.tsv",
+	list = "{name}/duplex/{name}_{target}_all_clusters.txt"
+    output:
+        b2_list = "{name}/duplex/{name}_{target}_b2_clusters.txt"
+    shell:
+        """
+        awk '{{ if ($8 == 2 && $9 == 1) print $1 }}' {input.tsv} | grep -f {input.list} > {output.b2_list} && sed -i s/$/.fasta/ {output.b2_list}
+        """
+
+rule duplex_pull_fastas:
+    input:
+        list = "{name}/duplex/{name}_{target}_b2_clusters.txt"
+    output:
+        fa_dir = directory("{name}/duplex/{name}_{target}_b2_clusters_fasta/"),
+        name_dir = directory("{name}/duplex/{name}_{target}_b2_readnames/")
+    shell:
+        """
+        mkdir {wildcards.name}/duplex/{wildcards.name}_{wildcards.target}_b2_clusters_fasta && cd {wildcards.name}/clustering/{wildcards.target}/clusters_fa && xargs -a ../../../../{input.list} cp -t ../../../../{wildcards.name}/duplex/{wildcards.name}_{wildcards.target}_b2_clusters_fasta/ && cd ../../../.. && mkdir {wildcards.name}/duplex/{wildcards.name}_{wildcards.target}_b2_readnames  
+        """
+
+rule duplex_pull_readnames:
+    input:
+        fa_dir = "{name}/duplex/{name}_{target}_b2_clusters_fasta/",
+        name_dir = "{name}/duplex/{name}_{target}_b2_readnames/"
+    output:
+        file = "{name}/outputs/{name}_{target}_b2_pairs_ids.txt"
+    shell:
+        """
+        find {input.fa_dir}/ -name "*.fasta" | parallel "seqkit seq --name {{}}| tr '\n' ' ' > {input.name_dir}/{{/.}}.txt" && sed s/$/\/ {input.name_dir}/* > {output.file} 
+        """
